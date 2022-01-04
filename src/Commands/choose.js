@@ -6,9 +6,9 @@ module.exports = {
 		.setDescription('Chooses one of many options!')
 		.setDefaultPermission(false)
 		.addStringOption(option => 
-            option.setName('options')
-                .setDescription('Options to choose from!')
-                .setRequired(true)),
+		    option.setName('options')
+			.setDescription('Options to choose from!')
+			.setRequired(true)),
 
     async execute(interaction) {
         let options = interaction.options.getString('options').split(' ');
