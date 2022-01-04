@@ -18,11 +18,6 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', () => {
-    //client.application.commands.fetch().then(commands => {
-        //for (const cmd of commands) {
-            //console.table(cmd, ['id', 'name']);
-        //}}
-        //).catch(console.error);
     const date = new Date();
     console.log(`[${ date.toLocaleString('de-DE', { timeZone: 'CET' }) }] ${ client.user.username } ready!`);
     client.user.setActivity('mit dir!', { type: 'PLAYING' });
