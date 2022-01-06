@@ -4,7 +4,6 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('choose')
 		.setDescription('Chooses one of many options!')
-		.setDefaultPermission(false)
 		.addStringOption(option => 
 		    option.setName('options')
 			.setDescription('Options to choose from!')
