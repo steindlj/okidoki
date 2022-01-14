@@ -29,12 +29,12 @@ module.exports = {
 			adapterCreator: interaction.guild.voiceAdapterCreator 
 		});
 		const player = createAudioPlayer();
-		const resource = createAudioResource(createReadStream('../media/dababy.ogg', { inputType: StreamType.OggOpus }));
+		const resource = createAudioResource(createReadStream('../media/sound/dababy.ogg', { inputType: StreamType.OggOpus }));
 		player.play(resource);
 		connection.subscribe(player);
 		player.on(AudioPlayerStatus.Idle, () => {
 			connection.destroy();
-			//interaction.channel.send({ content: `LETS GOOOO!`, files: [img[index]]});
+			interaction.channel.send({ content: `LETS GOOOO!`, files: [img[index]]});
 			interaction.editReply({ content: 'Command ausgeführt!', ephemeral: true });
 		});
 	},

@@ -18,16 +18,16 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', () => {
-    //client.application.commands.fetch().then(commands => {
-        //for (const cmd of commands) {
-            //console.table(cmd, ['id', 'name']);
-        //}}
-        //).catch(console.error);
+    client.application.commands.fetch().then(commands => {
+        for (const cmd of commands) {
+            console.table(cmd, ['id', 'name']);
+        }}
+        ).catch(console.error);
     const date = new Date();
     console.log(`[${ date.toLocaleString('de-DE', { timeZone: 'CET' }) }] ${ client.user.username } ready!`);
     client.user.setActivity('mit dir!', { type: 'PLAYING' });
     updatePermission(client, guildIdlol);
-    //updatePermission(client, guildIdF);
+    updatePermission(client, guildIdF);
     mongoose.connect(mongodb)
         .then(() => {
             console.log('Connected to DB!');
