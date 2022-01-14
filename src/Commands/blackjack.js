@@ -182,16 +182,16 @@ module.exports = {
 					enemyValue = handValue(playerHand).toString().replaceAll(',', ' or ');
 				};
 				return new MessageEmbed()
-        		.setColor(color)
-        		.setTitle(title)
-				.setThumbnail(thumbnail, 100, 100)
-        		.addFields(
-            	{ name: 'Value', value: handValue(hand).toString().replaceAll(',', ' or '), inline: true },
-				{ name: enemy, value: enemyValue, inline: true }
-				)
-				.setImage(image)
-        		.setTimestamp()
-				.setFooter(interaction.user.username, interaction.user.displayAvatarURL());
+					.setColor(color)
+					.setTitle(title)
+					.setThumbnail(thumbnail)
+					.addFields(
+					{ name: 'Value', value: handValue(hand).toString().replaceAll(',', ' or '), inline: true },
+					{ name: enemy, value: enemyValue, inline: true }
+					)
+					.setImage(image)
+					.setTimestamp()
+					.setFooter(interaction.user.username, interaction.user.displayAvatarURL());
 			};
 			if (hand === playerHand && playerHand.length == 2) {
 				await interaction.reply({ embeds: [handEmbed(hand)], files: [await createCanvas(hand), await createCanvas(dealerHand)], components: [row] });
