@@ -3,8 +3,6 @@ const fs = require('fs');
 const { token, guildIdlol, guildIdF, mongodb } = require('../config.json');
 const mongoose = require('mongoose');
 
-
-
 const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_VOICE_STATES] });
 client.options.retryLimit = Infinity;
 
@@ -18,11 +16,14 @@ for (const file of commandFiles) {
 }
 
 client.once('ready', () => {
+<<<<<<< HEAD
     client.application.commands.fetch().then(commands => {
         for (const cmd of commands) {
             console.table(cmd, ['id', 'name']);
         }}
         ).catch(console.error);
+=======
+>>>>>>> bb0e2cef568fe3d87bd8d779c1acaeb85222ecbb
     const date = new Date();
     console.log(`[${ date.toLocaleString('de-DE', { timeZone: 'CET' }) }] ${ client.user.username } ready!`);
     client.user.setActivity('mit dir!', { type: 'PLAYING' });
