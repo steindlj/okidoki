@@ -34,8 +34,8 @@ module.exports = {
 
     async execute(interaction) {
         if (interaction.options.getSubcommand() === 'increase') {
-            const message = interaction.options.getString('message');
-            const number = interaction.options.getNumber('number');
+            let message = interaction.options.getString('message');
+            let number = interaction.options.getNumber('number');
             let out = message;
             await interaction.reply(out);
             for (let i = 0; i < number; i++) {
@@ -44,9 +44,9 @@ module.exports = {
             }
 
         } else if (interaction.options.getSubcommand() === 'fixed') {
-            const message = interaction.options.getString('message');
-            const size = interaction.options.getNumber('size');
-            const number = interaction.options.getNumber('number');
+            let message = interaction.options.getString('message');
+            let size = interaction.options.getNumber('size');
+            let number = interaction.options.getNumber('number');
             let out = message;
             for (let i = 0; i < size-1; i++) {
                 out += message;

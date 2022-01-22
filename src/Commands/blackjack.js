@@ -35,7 +35,7 @@ module.exports = {
 		collector.on('collect', async i => {
 			if (i.user.id === interaction.user.id) {
 				if (i.customId === 'hit') {
-					i.update('HIT');
+					i.update('__HIT__');
 					dealingCards(playerHand);
 					await message(playerHand);
 				} else {
@@ -117,11 +117,12 @@ module.exports = {
 					embed = winEmbed(dealerHand);
 					image = await createCanvas(dealerHand);
 				}	
-				if (player.length ==  dealer.length) {
+				if (playerHand.length ==  dealerHand.length) {
 					embed = pushEmbed;
 					await interaction.followUp({ embeds: [embed] });
-				};
-				await interaction.followUp({ embeds: [embed], files: [image] });
+				} else {
+					await interaction.followUp({ embeds: [embed], files: [image] });
+				}w
 			} else if (player <= 21 && dealer <= 21) {
 				let embed = winEmbed(playerHand);
 				let image = await createCanvas(playerHand);

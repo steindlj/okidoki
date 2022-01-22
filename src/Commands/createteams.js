@@ -15,7 +15,7 @@ module.exports = {
 
     async execute(interaction) {
         let players = interaction.options.getString('players').split(' ');
-        const number = interaction.options.getNumber('number');
+        let number = interaction.options.getNumber('number');
         if (number < 2) {
             return await interaction.reply({ content: 'Es muss mindestens 2 Teams geben!', ephemeral: true });
         } else if (players.length < 2) {
@@ -24,8 +24,8 @@ module.exports = {
             return await interaction.reply({ content: 'Du hast mehr Teams als Spieler!', ephemeral: true });
         }
         await interaction.deferReply();
-        const sizeOfTeam = Math.floor(players.length / number);
-        const leftPlayers = players.length - sizeOfTeam * number;
+        let sizeOfTeam = Math.floor(players.length / number);
+        let leftPlayers = players.length - sizeOfTeam * number;
         let team;
         let message = `**__Generierte Teams: [${players.toString()}]__**`;
         

@@ -22,10 +22,10 @@ module.exports = {
         let i = true;
         checkDB();
         if (interaction.options.getSubcommand() === 'play') {
-            const coin = ['Heads', 'Tails'];
-            const index = Math.floor(Math.random() * coin.length);
-            const input = interaction.options.getString('options');
-            const flip = coin[index] === input;
+            let coin = ['Heads', 'Tails'];
+            let index = Math.floor(Math.random() * coin.length);
+            let input = interaction.options.getString('options');
+            let flip = coin[index] === input;
             if (flip) {
                 DiscordDB.findOneAndUpdate({ userId: interaction.user.id }, { $inc: { coin_won: 1 } }, function (err, user) {
                     if(err) return handleError(err);

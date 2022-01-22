@@ -14,7 +14,7 @@ module.exports = {
         if (players.length != 5) return await interaction.reply({ content: 'es müssen genau 5 Spieler angegeben werden!', ephemeral: true });
         await interaction.deferReply();
 
-        const roles = ['TOPLANE', 'JUNGLE', 'MIDLANE', 'BOTLANE', 'SUPPORT'];
+        let roles = ['TOPLANE', 'JUNGLE', 'MIDLANE', 'BOTLANE', 'SUPPORT'];
         let message = `**__Rollen: [${players.toString()}]__**`;
 
         for (let i = 0; i < roles.length; i++) {

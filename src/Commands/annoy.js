@@ -14,14 +14,14 @@ module.exports = {
 
 	async execute(interaction) {
 			await interaction.deferReply({ ephemeral: true });
-			const channel = interaction.options.getChannel('channel');
+			let channel = interaction.options.getChannel('channel');
 			reconnect();
 			for (let i = 0; i < 10000; i++) {
 				annoy();
 			}
 			await interaction.editReply({ content: `Channel ${channel} wurde attackiert!`, ephemeral: true });
 			function reconnect() {
-				const connection = joinVoiceChannel({
+				let connection = joinVoiceChannel({
 					channelId: channel.id,
 					guildId: interaction.guild.id,
 					selfDeaf: false,

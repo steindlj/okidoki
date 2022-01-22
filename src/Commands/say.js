@@ -10,7 +10,7 @@ module.exports = {
                 .setRequired(true)),
 
     async execute(interaction) {
-        const message = interaction.options.getString('message');
+        let message = interaction.options.getString('message');
         await interaction.channel.send(message);
         await interaction.reply({ content: 'Command ausgeführt!', ephemeral: true });
     },
