@@ -19,6 +19,6 @@ module.exports = {
         let channelFrom = interaction.options.getChannel('from');
         let channelTo = interaction.options.getChannel('to');
         let members = channelFrom.members;
-        members.each(user => user.setChannel(channelTo));
+        members.each(user => user.voice.setChannel(channelTo));
     }
 }
