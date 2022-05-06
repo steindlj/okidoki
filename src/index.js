@@ -24,8 +24,6 @@ client.once('ready', () => {
     const date = new Date();
     console.log(`[${ date.toLocaleString('de-DE', { timeZone: 'CET' }) }] ${ client.user.username } ready!`);
     client.user.setActivity('mit dir!', { type: 'PLAYING' });
-    updatePermission(client, guildIdlol);
-    updatePermission(client, guildIdF);
     mongoose.connect(mongodb)
         .then(() => {
             console.log('Connected to DB!');
@@ -49,63 +47,5 @@ client.on('interactionCreate', async interaction => {
         await interaction.reply({ content: 'Error!', ephemeral: true });
     }
 });
-
-function updatePermission(client, guildId) {
-    let fullPermissions = [];
-    if (guildId === guildIdlol) {
-        fullPermissions = [
-        {
-            id: '920343276941348894',
-            permissions: [{
-                id: '596776462657388545',
-                type: 'ROLE',
-                permission: true,
-            }],
-        },
-        {
-            id: '920343276941348901',
-            permissions: [{
-                id: '596776462657388545',
-                type: 'ROLE',
-                permission: true,
-            }],
-        },
-    ];
-    } else if (guildId === guildIdF) {
-        fullPermissions = [
-            {
-                id: '920343276941348894',
-                permissions: [
-                {
-                    id: '851167029279850506',
-                    type: 'ROLE',
-                    permission: true,
-                },
-                {
-                    id: '249553273621708812',
-                    type: 'USER',
-                    permission: true,
-                }
-                ],
-            },
-            {
-                id: '920343276941348901',
-                permissions: [
-                {
-                    id: '851167029279850506',
-                    type: 'ROLE',
-                    permission: true,
-                },
-                {
-                    id: '249553273621708812',
-                    type: 'USER',
-                    permission: true,
-                }
-                ],
-            },
-        ];
-    }
-    client.guilds.cache.get(guildId).commands.permissions.set({ fullPermissions });
-};
 
 client.login(token);

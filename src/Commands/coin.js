@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const DiscordDB = require('../dbSchema.js');
+const wait = require('util').promisify(setTimeout);
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,6 +22,7 @@ module.exports = {
     async execute(interaction) {
         let i = true;
         checkDB();
+        wait(250);
         if (interaction.options.getSubcommand() === 'play') {
             let coin = ['Heads', 'Tails'];
             let index = Math.floor(Math.random() * coin.length);
