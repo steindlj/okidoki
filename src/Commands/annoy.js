@@ -5,7 +5,6 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('annoy')
 		.setDescription('Annoys user by invading the channel several times!')
-		.setDefaultPermission(false)
 		.addChannelOption(option => 
 			option.setName('channel')
 			.setDescription('Channel to be annoyed.')

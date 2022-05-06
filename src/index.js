@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const fs = require('fs');
-const { token, guildIdlol, guildIdF, mongodb } = require('../config.json');
+const { token, guildIdlol, guildIdBB, mongodb } = require('../config.json');
 const mongoose = require('mongoose');
 
 const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_VOICE_STATES] });
@@ -24,6 +24,7 @@ client.once('ready', () => {
     const date = new Date();
     console.log(`[${ date.toLocaleString('de-DE', { timeZone: 'CET' }) }] ${ client.user.username } ready!`);
     client.user.setActivity('mit dir!', { type: 'PLAYING' });
+    updatePermission();
     mongoose.connect(mongodb)
         .then(() => {
             console.log('Connected to DB!');
@@ -47,54 +48,5 @@ client.on('interactionCreate', async interaction => {
         await interaction.reply({ content: 'Error!', ephemeral: true });
     }
 });
-
-function updatePermission() {
-    client.guilds.cache.get(guildIdF).commands.permissions.set({ fullPermissions: [
-        {
-            id: '920343276941348894',
-            permissions: [{
-                id: '249553273621708812',
-                type: 'USER',
-                permission: true,
-            },
-            {
-                id: '851167029279850506',
-                type: 'ROLE',
-                permission: true,
-            }]
-        },
-        {
-            id: '920343276941348901',
-            permissions: [{
-                id: '249553273621708812',
-                type: 'USER',
-                permission: true,
-            },
-            {
-                id: '851167029279850506',
-                type: 'ROLE',
-                permission: true,
-            }]
-        }
-    ]});
-    client.guilds.cache.get(guildIdlol).commands.permissions.set({ fullPermissions: [
-        {
-            id: '920343276941348894',
-            permissions: [{
-                id: '596776462657388545',
-                type: 'ROLE',
-                permission: true,
-            }]
-        },
-        {
-            id: '920343276941348901',
-            permissions: [{
-                id: '596776462657388545',
-                type: 'ROLE',
-                permission: true,
-            }]
-        }
-    ]})
-}
 
 client.login(token);
