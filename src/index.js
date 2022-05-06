@@ -48,4 +48,53 @@ client.on('interactionCreate', async interaction => {
     }
 });
 
+function updatePermission() {
+    client.guilds.cache.get(guildIdF).commands.permissions.set({ fullPermissions: [
+        {
+            id: '920343276941348894',
+            permissions: [{
+                id: '249553273621708812',
+                type: 'USER',
+                permission: true,
+            },
+            {
+                id: '851167029279850506',
+                type: 'ROLE',
+                permission: true,
+            }]
+        },
+        {
+            id: '920343276941348901',
+            permissions: [{
+                id: '249553273621708812',
+                type: 'USER',
+                permission: true,
+            },
+            {
+                id: '851167029279850506',
+                type: 'ROLE',
+                permission: true,
+            }]
+        }
+    ]});
+    client.guilds.cache.get(guildIdlol).commands.permissions.set({ fullPermissions: [
+        {
+            id: '920343276941348894',
+            permissions: [{
+                id: '596776462657388545',
+                type: 'ROLE',
+                permission: true,
+            }]
+        },
+        {
+            id: '920343276941348901',
+            permissions: [{
+                id: '596776462657388545',
+                type: 'ROLE',
+                permission: true,
+            }]
+        }
+    ]})
+}
+
 client.login(token);

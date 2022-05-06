@@ -4,6 +4,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('spam')
         .setDescription('Writes a message repeatedly!')
+        .setDefaultPermission(false)
         .addSubcommand(subcommand => 
             subcommand.setName('increase')
                 .setDescription('Increases number of input per message.')
