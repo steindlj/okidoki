@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const fs = require('fs');
-const { token, guildIdlol, guildIdF, mongodb } = require('../config.json');
+const { token, mongodb } = require('../config.json');
 const mongoose = require('mongoose');
 
 const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_VOICE_STATES] });
