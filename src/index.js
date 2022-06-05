@@ -24,7 +24,6 @@ client.once('ready', () => {
     const date = new Date();
     console.log(`[${ date.toLocaleString('de-DE', { timeZone: 'CET' }) }] ${ client.user.username } ready!`);
     client.user.setActivity('mit dir!', { type: 'PLAYING' });
-    updatePermission();
     mongoose.connect(mongodb)
         .then(() => {
             console.log('Connected to DB!');
