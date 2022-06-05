@@ -19,6 +19,7 @@ module.exports = {
         let channelFrom = interaction.options.getChannel('from');
         let channelTo = interaction.options.getChannel('to');
         let members = channelFrom.members;
-        members.each(user => user.setChannel(channelTo));
+        members.each(user => user.voice.setChannel(channelTo));
+        await interaction.reply({ content: `All members were moved!`, ephemeral: true });
     }
 }
