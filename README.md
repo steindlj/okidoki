@@ -1,5 +1,21 @@
 # okidoki
 Discord bot for servers dedicated to gaming, with some commands to play around with.
+| Command | Description |
+| --- | --- |
+| annoy | Annoys user by invading the channel several times. |
+| blackjack | Play blackjack. |
+| choose | Chooses one of many options. |
+| coin | Coinflip. |
+| createteams | Distributes given players to teams. |
+| dababy | Plays "Let's Go" from DabBaby. |
+| lolrole | Decides role for given players. (League of Legends) |
+| movechannel | Move all members from one channel to another. |
+| say | Writes the content of the message. |
+| spam | Writes a message repeatedly. |
+| ttt | Play TicTacToe against someone. |
+
+
+
 ## License
 okidoki – Discord bot for servers dedicated to gaming, with some commands to play around with.<br />
 Copyright © 2022 steindlj
