@@ -1,7 +1,7 @@
 # okidoki
 Useful Discord bot for servers dedicated to gaming, with some commands to play around with.
 ## License
-okidoki - Useful Discord bot for servers dedicated to gaming, with some commands to play around with.<br />
+okidoki <br />
 Copyright © 2022 steindlj
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
