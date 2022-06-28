@@ -1,6 +1,6 @@
-#okidoki
+# okidoki
 Useful Discord bot for servers dedicated to gaming, with some commands to play around with.
-##License
+## License
 okidoki - Useful Discord bot for servers dedicated to gaming, with some commands to play around with.<br />
 Copyright © 2022 steindlj
 
