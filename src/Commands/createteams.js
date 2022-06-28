@@ -3,7 +3,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('createteams')
-        .setDescription('Distributes specified players to teams!')
+        .setDescription('Distributes given players to teams!')
         .addNumberOption(option => 
             option.setName('number')
                 .setDescription('Number of teams.')
