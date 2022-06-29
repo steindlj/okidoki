@@ -37,7 +37,7 @@ module.exports = {
             if (leftPlayers > 0) {
                 add(team, players);
             }
-            message += `\n**Team ${i + 1}:** ${team.toString().replace(',', ' ')}`;
+            message += `\n**Team ${i + 1}:** ${team.toString().replaceAll(',', ' ')}`;
         }
         await interaction.editReply(message);
 
