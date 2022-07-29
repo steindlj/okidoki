@@ -33,6 +33,18 @@ client.once('ready', () => {
         });
 });
 
+client.on('voiceStateUpdate', (oldState, newState) => {
+    if(oldState.member.user.id !== "249553273621708812") return;
+    let muted = newState.mute == true ? true : false;
+    fetch(`${url}/${muted}`, {
+	body: "Content-Length: 0",
+	headers: {
+		"Content-Type": "application/x-www-form-urlencoded"
+	},
+	method: "POST"
+    });
+});
+
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) return;
 
