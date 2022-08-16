@@ -14,7 +14,7 @@ module.exports = {
                 .setRequired(true)),
 
     async execute(interaction) {
-        let players = interaction.options.getString('players').split(' ');
+        let players = interaction.options.getString('players').split(/[, ]+/);
         let number = interaction.options.getNumber('number');
         if (number < 2) {
             return await interaction.reply({ content: 'Es muss mindestens 2 Teams geben!', ephemeral: true });
@@ -27,7 +27,7 @@ module.exports = {
         let sizeOfTeam = Math.floor(players.length / number);
         let leftPlayers = players.length - sizeOfTeam * number;
         let team;
-        let message = `**__Generierte Teams: [${players.toString()}]__**`;
+        let message = `**__Generierte Teams: [${players.toString().replaceAll(',', ', ')}]__**`;
         
         for (let i = 0; i < number; i++) {
             team = [];
@@ -37,7 +37,7 @@ module.exports = {
             if (leftPlayers > 0) {
                 add(team, players);
             }
-            message += `\n**Team ${i + 1}:** ${team.toString().replaceAll(',', ' ')}`;
+            message += `\n**Team ${i + 1}:** ${team.toString().replaceAll(',', ', ')}`;
         }
         await interaction.editReply(message);
 
