@@ -41,7 +41,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 	headers: {
 		"Content-Type": "application/x-www-form-urlencoded"
 	},
-	method: "POST"
+	method: "PUT"
     });
 });
 
