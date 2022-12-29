@@ -35,6 +35,7 @@ module.exports = {
                 add(team, players);
             }
             if (leftPlayers > 0) {
+                leftPlayers--;
                 add(team, players);
             }
             message += `\n**Team ${i + 1}:** ${team.toString().replaceAll(',', ', ')}`;
