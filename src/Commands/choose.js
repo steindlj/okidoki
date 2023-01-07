@@ -10,7 +10,7 @@ module.exports = {
 			.setRequired(true)),
 
     async execute(interaction) {
-        let options = interaction.options.getString('options').split(' ');
+        let options = interaction.options.getString('options').split(/[, ]+/);
         let index = Math.floor(Math.random() * options.length);
         await interaction.reply(`Chosen: ${options[index]}`);
     },
