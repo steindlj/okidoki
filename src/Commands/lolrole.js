@@ -10,7 +10,7 @@ module.exports = {
                 .setRequired(true)),
 
     async execute(interaction) {
-        let players = interaction.options.getString('players').split(' ');
+        let players = interaction.options.getString('players').split(/[, ]+/);
         if (players.length != 5) return await interaction.reply({ content: 'es müssen genau 5 Spieler angegeben werden!', ephemeral: true });
         await interaction.deferReply();
 
