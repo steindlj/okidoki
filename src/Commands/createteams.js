@@ -27,7 +27,7 @@ module.exports = {
         let sizeOfTeam = Math.floor(players.length / number);
         let leftPlayers = players.length - sizeOfTeam * number;
         let team;
-        let message = `**__Generierte Teams: [${players.toString().replaceAll(',', ', ')}]__**`;
+        let message = `**__Generierte Teams: [${players.join(', ')}]__**`;
         
         for (let i = 0; i < number; i++) {
             team = [];
@@ -38,7 +38,7 @@ module.exports = {
                 leftPlayers--;
                 add(team, players);
             }
-            message += `\n**Team ${i + 1}:** ${team.toString().replaceAll(',', ', ')}`;
+            message += `\n**Team ${i + 1}:** ${team.join(', ')}`;
         }
         await interaction.editReply(message);
 
