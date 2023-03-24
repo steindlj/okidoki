@@ -31,7 +31,7 @@ module.exports = {
 		collector.on('collect', async i => {
 			if (i.user.id === interaction.user.id) {
 				if (i.customId === 'hit') {
-					await (playerHand);
+					await updateHand(playerHand);
 				} else {
 					collector.stop();
 					await updateHand(dealerHand);
@@ -193,7 +193,7 @@ module.exports = {
 			let valAces = [];
 			for (let i = 0; i < hand.length; i++) {
 				if (!isNaN(hand[i].charAt(path.length))) {
-					if (hand[i].charAt(path.length) === 1) value += 10;
+					if (hand[i].charAt(path.length) == '1') value += 10;
 					else value += parseInt(hand[i].charAt(path.length));
 				} else {
 					if (hand[i].charAt(path.length) == 'a') {
