@@ -1,9 +1,9 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { MessageAttachment, MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
+const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder } = require('@discordjs/builders');
+const {EmbedBuilder, Colors, AttachmentBuilder} = require('discord.js');
 const Canvas = require('canvas');
 const fs = require('fs');
+const {ButtonStyle, ComponentType} = require("discord-api-types/v10");
 const path = '../media/cards/';
-const wait = require('util').promisify(setTimeout);
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -14,224 +14,55 @@ module.exports = {
 		let cards = fs.readdirSync('../media/cards').filter(file => file.endsWith('.png'));
 		let playerHand = [];
 		let dealerHand = [];
-		let row = new MessageActionRow()
-			.addComponents(
-				new MessageButton()
-				.setCustomId('hit')
-				.setLabel('HIT')
-				.setStyle('SUCCESS')
-			)
-			.addComponents(
-				new MessageButton()
-				.setCustomId('stand')
-				.setLabel('STAND')
-				.setStyle('DANGER')
+		let msg;
+		let row = new ActionRowBuilder()
+			.addComponents([
+				new ButtonBuilder()
+					.setCustomId('hit')
+					.setLabel('HIT')
+					.setStyle(ButtonStyle.Primary),
+				new ButtonBuilder()
+					.setCustomId('stand')
+					.setLabel('STAND')
+					.setStyle(ButtonStyle.Danger)]
 			);
-		let collector = interaction.channel.createMessageComponentCollector({ componentType: 'BUTTON' });
-		dealingCards(playerHand);
-		dealingCards(playerHand);
-		dealingCards(dealerHand);
-		await message(playerHand);
+		let collector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button });
+		await init();
 		collector.on('collect', async i => {
 			if (i.user.id === interaction.user.id) {
 				if (i.customId === 'hit') {
-					i.update('__HIT__');
-					dealingCards(playerHand);
-					await message(playerHand);
+					await (playerHand);
 				} else {
-					i.update('__STAND__');
 					collector.stop();
-					dealingCards(dealerHand);
-					await message(dealerHand);
+					await updateHand(dealerHand);
 					if (Array.isArray(handValue(dealerHand))) {
-						while (handValue(dealerHand)[1] < 17) {
-							wait(500);
-							dealingCards(dealerHand);
-							await message(dealerHand);
-						}
-						if (handValue(dealerHand)[1] > 21 && handValue(dealerHand)[0] < 17) {
-							while (handValue(dealerHand)[0] < 17) {
-								wait(500)
-								dealingCards(dealerHand);
-								await message(dealerHand);
-							}
+						while (handValue(dealerHand)[0] < 17) {
+							await wait(500);
+							await updateHand(dealerHand);
 						}
 					} else {
 						while (handValue(dealerHand) < 17) {
-							wait(500);
-							dealingCards(dealerHand);
-							await message(dealerHand);
+							await wait(500);
+							await updateHand(dealerHand);
 						}
 					}
-					win();
+					await win();
 				}
 			} else {
-				i.reply({ content: 'Not your game!', ephemeral: true });
+				await i.reply({ content: 'Not your game!', ephemeral: true });
 			}
 		});
-		
-		async function win() {
-			await wait(500);
-			let winEmbed = (hand) => {
-				let title = hand === playerHand ? `${interaction.user.username} won!` : 'Dealer won!';
-				let thumbnail = hand === playerHand ? 'attachment://player.png' : 'attachment://dealer.png';
-				return new MessageEmbed()
-					.setTitle(title)
-					.setThumbnail(thumbnail)
-					.setColor('GREEN')
-					.setTimestamp()
-					.addFields({ name: 'Value', value: handValue(hand).toString().replaceAll(',', ' or ') })
-					.setFooter(interaction.user.username, interaction.user.displayAvatarURL());
-			};
-			let pushEmbed = new MessageEmbed()
-				.setColor('GREY')
-				.setTitle('PUSH')
-				.setTimestamp()
-				.setFooter(interaction.user.username, interaction.user.displayAvatarURL());
-			let player = 0;
-			let dealer = 0;
-			if (Array.isArray(handValue(playerHand))) {
-				let hand = handValue(playerHand);
-				let len = hand.length-1;
-				while (hand[len] > 21) {
-					len--;
-				}
-				player = hand[len];
-			} else {
-				player = handValue(playerHand);
-			};
-			if (Array.isArray(handValue(dealerHand))) {
-				let hand = handValue(dealerHand);
-				let len = hand.length-1;
-				while (hand[len] > 21) {
-					len--;
-				}
-				dealer = hand[len];
-			} else {
-				dealer = handValue(dealerHand);
-			};
-			if (player == dealer) {
-				let embed = winEmbed(playerHand);
-				let image = await createCanvas(playerHand);
-				if (playerHand.length > dealerHand.length) {
-					embed = winEmbed(dealerHand);
-					image = await createCanvas(dealerHand);
-				}	
-				if (playerHand.length ==  dealerHand.length) {
-					embed = pushEmbed;
-					await interaction.followUp({ embeds: [embed] });
-				} else {
-					await interaction.followUp({ embeds: [embed], files: [image] });
-				}w
-			} else if (player <= 21 && dealer <= 21) {
-				let embed = winEmbed(playerHand);
-				let image = await createCanvas(playerHand);
-				if (player < dealer) {
-					embed = winEmbed(dealerHand);
-					image = await createCanvas(dealerHand);
-				}	
-				await interaction.followUp({ embeds: [embed], files: [image] });
-			} else if (player > 21 && dealer > 21) {
-				let embed = winEmbed(playerHand);
-				let image = await createCanvas(playerHand);
-				if (player > dealer) {
-					embed = winEmbed(dealerHand);
-					image = await createCanvas(dealerHand);
-				}	
-				await interaction.followUp({ embeds: [embed], files: [image] });
-			} else if (player > 21 && dealer <= 21) {
-				let embed = winEmbed(dealerHand);
-				let image = await createCanvas(dealerHand);
-				await interaction.followUp({ embeds: [embed], files: [image] });
-			} else if (player <= 21 && dealer > 21) {
-				let embed = winEmbed(playerHand);
-				let image = await createCanvas(playerHand);
-				await interaction.followUp({ embeds: [embed], files: [image] });
-			};
-		}
-		
-		function dealingCards(hand) {
-            let index = Math.floor(Math.random() * cards.length);
-            let current = cards[index];
-			let img = path + current;
-            cards.splice(index, 1);
-			if (hand === playerHand) {
-				hand.push(img);
-			} else if (hand === dealerHand) {
-				hand.push(img);
-			};
-        }
 
-		async function message(hand) {
-			wait(250);
-			let color = 'GREEN';
-			let title = `${interaction.user.username}\'s Hand`;
-			if (Array.isArray(handValue(hand)) && handValue(hand)[0] > 21 || handValue(hand) > 21) {
-				row.components[0].setDisabled(true);
-				color = 'RED';
-			};
-			const handEmbed = (hand) => {
-				let thumbnail = 'attachment://dealer.png';
-				let image = 'attachment://player.png'
-				let enemy = 'Dealer';
-				let enemyValue = handValue(dealerHand).toString().replaceAll(',', ' or ')
-				if (hand === dealerHand) {
-					title = 'Dealer\'s Hand';
-					image = 'attachment://dealer.png';
-					thumbnail = 'attachment://player.png';
-					enemy = 'Player';
-					enemyValue = handValue(playerHand).toString().replaceAll(',', ' or ');
-				};
-				return new MessageEmbed()
-					.setColor(color)
-					.setTitle(title)
-					.setThumbnail(thumbnail)
-					.addFields(
-					{ name: 'Value', value: handValue(hand).toString().replaceAll(',', ' or '), inline: true },
-					{ name: enemy, value: enemyValue, inline: true }
-					)
-					.setImage(image)
-					.setTimestamp()
-					.setFooter(interaction.user.username, interaction.user.displayAvatarURL());
-			};
-			if (hand === playerHand && playerHand.length == 2) {
-				await interaction.reply({ embeds: [handEmbed(hand)], files: [await createCanvas(hand), await createCanvas(dealerHand)], components: [row] });
-			} else if (hand === playerHand) {
-				interaction.channel.bulkDelete(1);
-				await interaction.followUp({ embeds: [handEmbed(hand)], files: [await createCanvas(hand), await createCanvas(dealerHand)], components: [row] });
-			} else if (hand === dealerHand) {
-				if (hand.length > 2) interaction.channel.bulkDelete(1);
-				await interaction.followUp({ embeds: [handEmbed(hand)], files: [await createCanvas(hand), await createCanvas(playerHand)] });
-			};
+		async function init() {
+			dealingCards(playerHand);
+			dealingCards(playerHand);
+			dealingCards(dealerHand);
+			await message(playerHand);
 		}
 
-		function handValue(hand) {
-			let value = 0; 
-			let ace = [value];
-			for (let i = 0; i < hand.length; i++) {
-				if (!isNaN(hand[i].charAt(path.length))) {
-					let cardValue = parseInt(hand[i].charAt(path.length)) == 1 ? 10 : parseInt(hand[i].charAt(path.length));
-					if (ace.length > 1) {
-						ace = ace.map(val => val + cardValue);
-					} else {
-						value += cardValue;
-						ace.shift();
-						ace.unshift(value);
-					}
-				} else if (hand[i].charAt(path.length) === 'a') {
-					ace = ace.map(val => val + 1);
-					ace.push(11 * ace.length + value);
-				} else {
-					if (ace.length > 1) {
-						ace = ace.map(val => val + 10);
-					} else {
-						value += 10;
-						ace.shift();
-						ace.unshift(value);
-					}
-				}
-			}
-			return ace.length > 1 ? ace : value;
+		async function updateHand(hand) {
+			dealingCards(hand);
+			await message(hand);
 		}
 
 		async function createCanvas(hand) {
@@ -251,9 +82,135 @@ module.exports = {
 					cardImage = await Canvas.loadImage(path+'back/back.png');
 					context.drawImage(cardImage, start, 0, cardWidth, cardHeight);
 				}
-			};
+			}
 			let name = hand === playerHand ? 'player.png' : 'dealer.png';
-			return new MessageAttachment(canvas.toBuffer(), name);
+			return new AttachmentBuilder(canvas.toBuffer(), { name: name });
 		}
-	},
-};
+
+		async function win() {
+			await wait(500);
+			let player;
+			let dealer;
+			if (Array.isArray(handValue(playerHand))) {
+				let hand = handValue(playerHand);
+				let len = hand.length-1;
+				while (hand[len] > 21) {
+					len--;
+				}
+				player = hand[len];
+			} else {
+				player = handValue(playerHand);
+			}
+			if (Array.isArray(handValue(dealerHand))) {
+				let hand = handValue(dealerHand);
+				let len = hand.length-1;
+				while (hand[len] > 21) {
+					len--;
+				}
+				dealer = hand[len];
+			} else {
+				dealer = handValue(dealerHand);
+
+			}
+			if (player === dealer) {
+				if (playerHand.length === dealerHand.length) {
+					msg.edit({ content: "Player won!", components: [] });
+				} else {
+					if (playerHand.length > dealerHand.length) msg.edit({ content: "Dealer won!", components: [] });
+					else msg.edit({ content: "Player won!", components: [] });
+				}
+			} else if (player <= 21 && dealer <= 21) {
+				if (player < dealer) msg.edit({ content: "Dealer won!", components: [] });
+				else msg.edit({ content: "Player won!", components: [] });
+			} else if (player > 21 && dealer > 21) {
+				if (player > dealer) msg.edit({ content: "Dealer won!", components: [] });
+				else msg.edit({ content: "Player won!", components: [] });
+			} else {
+				if (player < dealer) msg.edit({ content: "Player won!", components: [] });
+				else msg.edit({ content: "Dealer won!", components: [] });
+			}
+		}
+
+		function dealingCards(hand) {
+            let index = Math.floor(Math.random() * cards.length);
+            let current = cards[index];
+			let img = path + current;
+            cards.splice(index, 1);
+			if (hand === playerHand) {
+				hand.push(img);
+			} else if (hand === dealerHand) {
+				hand.push(img);
+			}
+        }
+
+		async function handEmbed(hand, color) {
+				let title, thumbnail, image, enemy, enemyValue;
+				if (hand === playerHand) {
+					title = 'Player\'s Hand';
+					thumbnail = 'attachment://dealer.png';
+					image = 'attachment://player.png'
+					enemy = 'Dealer';
+					enemyValue = handValue(dealerHand).toString().replaceAll(',', ' or ');
+				} else {
+					title = 'Dealer\'s Hand';
+					image = 'attachment://dealer.png';
+					thumbnail = 'attachment://player.png';
+					enemy = 'Player';
+					enemyValue = handValue(playerHand).toString().replaceAll(',', ' or ');
+				}
+				return new EmbedBuilder()
+					.setColor(color)
+					.setTitle(title)
+					.setThumbnail(thumbnail)
+					.addFields([
+						{ name: 'Value', value: handValue(hand).toString().replaceAll(',', ', '), inline: true },
+						{ name: enemy, value: enemyValue, inline: true }]
+					)
+					.setImage(image)
+					.setTimestamp()
+					.setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL() });
+		}
+
+		async function message(hand) {
+			await wait(250);
+			let color = Colors.Green;
+			if (Array.isArray(handValue(hand)) && handValue(hand)[0] > 21 || handValue(hand) > 21) {
+				row.components[0].setDisabled(true);
+				color = Colors.Red;
+			}
+			if (hand === playerHand && playerHand.length === 2) {
+				msg = await interaction.reply({ embeds: [await handEmbed(hand, color)], files: [await createCanvas(hand), await createCanvas(dealerHand)], components: [row] });
+			} else if (hand === playerHand) {
+				msg.edit({ embeds: [await handEmbed(hand, color)], files: [await createCanvas(hand), await createCanvas(dealerHand)], components: [row] });
+			} else if (hand === dealerHand) {
+				msg.edit({ embeds: [await handEmbed(hand, color)], files: [await createCanvas(hand), await createCanvas(playerHand)], components: [] });
+			}
+		}
+
+		function handValue(hand) {
+			let value = 0;
+			let aces = 0;
+			let valAces = [];
+			for (let i = 0; i < hand.length; i++) {
+				if (!isNaN(hand[i].charAt(path.length))) {
+					if (hand[i].charAt(path.length) === 1) value += 10;
+					else value += parseInt(hand[i].charAt(path.length));
+				} else {
+					if (hand[i].charAt(path.length) == 'a') {
+						value += 1; aces += 1;
+					} else {
+						value += 10;
+					}
+				}
+			}
+			for (let i = 0; i < aces+1; i++) {
+				valAces.push(value+i*10);
+			}
+			return aces > 0 ? valAces : value;
+		}
+
+		function wait(milliseconds) {
+			return new Promise((resolve) => setTimeout(resolve, milliseconds));
+		}
+	}
+}

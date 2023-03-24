@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { joinVoiceChannel } = require('@discordjs/voice');
+const { ChannelType } = require("discord-api-types/v10");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -8,7 +9,7 @@ module.exports = {
 		.addChannelOption(option => 
 			option.setName('channel')
 			.setDescription('Channel to be annoyed.')
-			.addChannelType(2)
+			.addChannelTypes(ChannelType.GuildVoice)
 			.setRequired(true)),
 
 	async execute(interaction) {

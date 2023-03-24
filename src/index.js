@@ -1,12 +1,14 @@
-const Discord = require('discord.js');
+const { Client, GatewayIntentBits, Collection } = require('discord.js');
 const fs = require('fs');
 const { token, mongodb, url } = require('../config.json');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose').default;
+const {ActivityType} = require("discord-api-types/v10");
+const fetch = require('node-fetch');
 
-const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_VOICE_STATES] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 client.options.retryLimit = Infinity;
 
-client.commands = new Discord.Collection();
+client.commands = new Collection();
 
 const commandFiles = fs.readdirSync('./Commands').filter(file => file.endsWith('.js'));
 
@@ -23,9 +25,9 @@ client.once('ready', () => {
         ).catch(console.error);
     const date = new Date();
     console.log(`[${ date.toLocaleString('de-DE', { timeZone: 'CET' }) }] ${ client.user.username } ready!`);
-    client.user.setActivity('mit dir!', { type: 'PLAYING' });
-    mongoose.connect(mongodb)
-        .then(() => {
+    client.user.setActivity('in die Ferne!', { type: ActivityType.Watching });
+    mongoose.connect(mongodb).
+        then(() => {
             console.log('Connected to DB!');
         })
         .catch((err) => {
@@ -35,7 +37,7 @@ client.once('ready', () => {
 
 client.on('voiceStateUpdate', (oldState, newState) => {
     if(oldState.member.user.id !== "249553273621708812") return;
-    let muted = newState.mute == true ? true : false;
+    let muted = newState.mute;
     fetch(`${url}/${muted}`, {
 	body: "Content-Length: 0",
 	headers: {

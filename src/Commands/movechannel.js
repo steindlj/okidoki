@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const {ChannelType} = require("discord-api-types/v10");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -7,12 +8,12 @@ module.exports = {
         .addChannelOption(option => 
             option.setName('from')
                 .setDescription('From this channel.')
-                .addChannelType(2)
+                .addChannelTypes(ChannelType.GuildVoice)
                 .setRequired(true))
         .addChannelOption(option => 
             option.setName('to')
                 .setDescription('To this channel.')
-                .addChannelType(2)
+                .addChannelTypes(ChannelType.GuildVoice)
                 .setRequired(true)),
 
     async execute(interaction) {

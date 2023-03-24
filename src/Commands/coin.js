@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const DiscordDB = require('../dbSchema.js');
-const wait = require('util').promisify(setTimeout);
+const {EmbedBuilder, Colors} = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -13,55 +13,62 @@ module.exports = {
                     option.setName('options')
                         .setDescription('Heads or Tails!')
                         .setRequired(true)
-                        .addChoice('Heads', 'Heads')
-                        .addChoice('Tails', 'Tails')))
+                        .addChoices(
+                            { name: 'Heads', value: 'Heads' },
+                            { name: 'Tails', value: 'Tails'}
+                        )))
         .addSubcommand(subcommand =>
             subcommand.setName('stats')
                 .setDescription('Shows your coinflip stats!')),
 
     async execute(interaction) {
-        let i = true;
-        checkDB();
-        wait(250);
+        await checkDB();
+        await wait(250);
         if (interaction.options.getSubcommand() === 'play') {
             let coin = ['Heads', 'Tails'];
             let index = Math.floor(Math.random() * coin.length);
             let input = interaction.options.getString('options');
             let flip = coin[index] === input;
             if (flip) {
-                DiscordDB.findOneAndUpdate({ userId: interaction.user.id }, { $inc: { coin_won: 1 } }, function (err, user) {
-                    if(err) return handleError(err);
-                    console.log(`Coin_won increased! (${interaction.user.username})`);
-                }).clone();
+                let user = await DiscordDB.findOneAndUpdate({ userId: interaction.user.id }, { $inc: { coin_won: 1 } });
+                if (user) console.log(`Coin_won increased! (${interaction.user.username} | ${user})`);
+                else await interaction.reply({ content: 'Error', ephemeral: true });
             } else {
-                DiscordDB.findOneAndUpdate({ userId: interaction.user.id }, { $inc: { coin_lost: 1 } }, function (err, user) {
-                    if(err) return handleError(err);
-                    console.log(`Coin_lost increased! (${interaction.user.username})`);
-                }).clone();
-            };
+                let user = await DiscordDB.findOneAndUpdate({ userId: interaction.user.id }, { $inc: { coin_lost: 1 } });
+                if (user) console.log(`Coin_won increased! (${interaction.user.username} | ${user})`);
+                else await interaction.reply({ content: 'Error', ephemeral: true });
+            }
             await interaction.reply(`es wurde **"${coin[index]}"** geworfen! (${flip ? 'Gewonnen' : 'Verloren'})`);
         } else if (interaction.options.getSubcommand() === 'stats') {
-            DiscordDB.findOne({ userId: interaction.user.id }, function(err, user) {
-                if(err) return handleError(err);
-                try {
-                    interaction.channel.send({ embeds: [ user.stats(interaction) ] });
-                } catch (error) {
-                    
-                }
-                let msg = i ? 'Command ausgeführt' : 'Try again!';
-                interaction.reply({ content: msg, ephemeral: true });
-            });
-        };
+            let entry = await DiscordDB.findOne({ userId: interaction.user.id }).exec();
+            if (entry) interaction.channel.send({ embeds: [statsEmbed(entry)] });
+            let msg = entry ? 'Command executed!' : 'No stats found!';
+            await interaction.reply({ content: msg, ephemeral: true });
+        }
 
-        function checkDB() {
-            DiscordDB.findOne({ userId: interaction.user.id }, function (err, user) {
-                if(err) return handleError(err);
-                if(!user) {
-                    DiscordDB.create({ userId: interaction.user.id });
-                    console.log(`User ${interaction.user.username} added!`);
-                    i = false;
-                };
-            });
-        };
-    },
-};
+        async function checkDB() {
+            let userInDB = await DiscordDB.findOne({userId: interaction.user.id}).exec() != null;
+            if (!userInDB) {
+                await DiscordDB.create({userId: interaction.user.id});
+                console.log(`User ${interaction.user.username} added!`);
+            }
+        }
+        function wait(milliseconds) {
+            return new Promise((resolve) => setTimeout(resolve, milliseconds));
+        }
+
+        function statsEmbed(user) {
+            const stats = (option) => { return `${option} (${Math.round((option/(user.coin_won+user.coin_lost))*100)}%)` };
+            return new EmbedBuilder()
+                .setColor(Colors.White)
+                .setTitle('Heads or Tails Stats')
+                .setAuthor({ name: interaction.user.username })
+                .setThumbnail(interaction.user.displayAvatarURL())
+                .addFields([
+                    { name: 'Won', value: stats(user.coin_won) },
+                    { name: 'Lost', value: stats(user.coin_lost)}]
+                )
+                .setTimestamp();
+        }
+    }
+}
