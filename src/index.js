@@ -6,7 +6,6 @@ const {ActivityType} = require("discord-api-types/v10");
 const fetch = require('node-fetch');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
-client.options.retryLimit = Infinity;
 
 client.commands = new Collection();
 
